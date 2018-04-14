@@ -1,3 +1,12 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
-ReactDOM.render(React.createElement('hi', null, 'Hello from React!'), document.getElementById('root'));
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
+
+ReactDOM.render(<App />, document.getElementById('root'));
+
+if (module.hot) {
+  module.hot.accept('./App', () => {
+    const NextApp = require('./App').default;
+    ReactDOM.render(<App />, document.getElementById('root'));
+  });
+}
