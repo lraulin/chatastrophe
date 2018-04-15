@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/functions
 
 # testing
 /coverage
@@ -15,10 +16,9 @@
 .env.development.local
 .env.test.local
 .env.production.local
+/public/secrets.js
 
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-build
-/public/secrets.js
