@@ -8,8 +8,21 @@
   <title>Document</title>
 </head>
 <body>
-  <img src="assets/icon.png" id="test-image" alt="logo">
-  <h1>Hello world!</h1>
   <div id="root"></div>
+  <script src="/secrets.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
+  <script>
+    // Initialize Firebase
+    var config = {
+      apiKey: window.apiKey,
+      authDomain: "chatastrophe-f64a6.firebaseapp.com",
+      databaseURL: "https://chatastrophe-f64a6.firebaseio.com",
+      projectId: "chatastrophe-f64a6",
+      storageBucket: "chatastrophe-f64a6.appspot.com",
+      messagingSenderId: window.messagingSenderId
+    };
+    firebase.initializeApp(config);
+    windo.firebase = firebase;
+  </script>
 </body>
 </html>

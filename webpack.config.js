@@ -1,3 +1,4 @@
+var ManifestPlugin = require('webpack-manifest-plugin');
 var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 
@@ -40,7 +41,10 @@ module.exports = {
     new HtmlWebpackPlugin({
       inject: true,
       template: __dirname + '/public/index.html',
-    })
+    }),
+    new ManifestPlugin ({
+      filename: 'asset-manifest.json'
+    }),
   ],
   devServer: {
     contentBase: "./public",
