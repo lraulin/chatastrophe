@@ -9,6 +9,7 @@ class App extends Component {
   state = {
     user: null,
     messages: [],
+    messagesLoaded: false,
   };
 
   handleSubmitMessage = (msg) => {
@@ -42,6 +43,9 @@ class App extends Component {
     // Check messages
     firebase.database().ref('/messages').on('value', (snapshot) => {
       this.onMessage(snapshot);
+      if (!this.state.messagesLoaded) {
+        this.setState({ messagesLoaded: true });
+      }
     });
   }
 
@@ -54,13 +58,23 @@ class App extends Component {
           path="/"
           render={() => (
             <ChatContainer
+              messagesLoaded={this.state.messagesLoaded}
               onSubmit={this.handleSubmitMessage}
               user={this.state.user}
               messages={this.state.messages}
             />
           )}
         />
-        <Route path="/users/:id" component={UserContainer} />
+        <Route
+          path="/users/:id"
+          render={({ history, match }) => (
+            <UserContainer
+              messages={this.state.messages}
+              messagesLoaded={this.state.messagesLoaded}
+              userID={match.params.id}
+            />
+          )}
+        />
       </div>
     );
   }

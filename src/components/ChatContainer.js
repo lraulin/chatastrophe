@@ -1,10 +1,21 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import { Link } from 'react-router-dom';
 import Header from './Header';
 
 export default class ChatContainer extends Component {
   state = {
     newMessage: '',
+  };
+
+  getAuthor = (msg, nextMsg) => {
+    if (!nextMsg || nextMsg.author !== msg.author) {
+      return (
+        <p className="author">
+          <Link to={`/users/${msg.user_id}`}>{msg.author}</Link>
+        </p>
+      );
+    }
   };
 
   handleInputChange = (e) => {
@@ -18,6 +29,13 @@ export default class ChatContainer extends Component {
     }
   };
 
+  scrollToBottom = () => {
+    const messageContainer = ReactDOM.findDOMNode(this.messageContainer);
+    if (messageContainer) {
+      messageContainer.scrollTop = messageContainer.scrollHeight;
+    }
+  };
+
   handleSubmit = () => {
     this.props.onSubmit(this.state.newMessage);
     this.setState({ newMessage: '' });
@@ -27,6 +45,16 @@ export default class ChatContainer extends Component {
     firebase.auth().signOut();
   };
 
+  componentDidMount() {
+    this.scrollToBottom();
+  }
+
+  componentDidUpdate(previousProps) {
+    if (previousProps.messages.length !== this.props.messages.length) {
+      this.scrollToBottom();
+    }
+  }
+
   render() {
     return (
       <div id="ChatContainer" className="inner-container">
@@ -35,21 +63,34 @@ export default class ChatContainer extends Component {
             Logout
           </button>
         </Header>
-        <h1>Hello from Chat Container!</h1>
-        <div id="message-container">
-          {this.props.messages.map((msg) => (
-            <div
-              key={msg.id}
-              className={`message ${this.props.user.email === msg.author &&
-                'mine'}`}
-            >
-              <p>{msg.msg}</p>
-              <p className="author">
-                <Link to={`/users/${msg.user_id}`}>{msg.author}</Link>
-              </p>
-            </div>
-          ))}
-        </div>
+        {this.props.messagesLoaded ? (
+          <div
+            id="message-container"
+            ref={(element) => {
+              this.messageContainer = element;
+            }}
+          >
+            {this.props.messages.map((msg, i) => (
+              <div
+                key={msg.id}
+                className={`message ${this.props.user.email === msg.author &&
+                  'mine'}`}
+              >
+                <p>{msg.msg}</p>
+                {this.getAuthor(msg, this.props.messages[i + 1])}
+              </div>
+            ))}
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+          </div>
+        ) : (
+          <div id="loading-container">
+            <img src="/assets/icon.png" alt="logo" id="loader" />
+          </div>
+        )}
         <div id="chat-input">
           <textarea
             placeholder="Add your message"
