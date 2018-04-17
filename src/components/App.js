@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Route, withRouter } from 'react-router-dom';
+import NotificationResource from '../resources/NotificationResource';
 import LoginContainer from './LoginContainer';
 import ChatContainer from './ChatContainer';
 import UserContainer from './UserContainer';
@@ -10,6 +11,14 @@ class App extends Component {
     user: null,
     messages: [],
     messagesLoaded: false,
+  };
+
+  listenForMessages = () => {
+    firebase.database().ref('/messages').on('value', (snapshot) => {
+      if (!this.state.messagesLoaded) {
+        this.setState({ messagesLoaded: true });
+      }
+    });
   };
 
   handleSubmitMessage = (msg) => {
@@ -32,14 +41,22 @@ class App extends Component {
   };
 
   componentDidMount() {
+    this.notifications = new NotificationResource(
+      firebase.messaging(),
+      firebase.database(),
+    );
+
     // Check user logged in
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         this.setState({ user });
+        this.listenForMessages();
+        this.notifications.changeUser(user);
       } else {
         this.props.history.push('/login');
       }
     });
+
     // Check messages
     firebase.database().ref('/messages').on('value', (snapshot) => {
       this.onMessage(snapshot);

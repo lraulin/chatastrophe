@@ -81,10 +81,6 @@ export default class ChatContainer extends Component {
               </div>
             ))}
             <br />
-            <br />
-            <br />
-            <br />
-            <br />
           </div>
         ) : (
           <div id="loading-container">
